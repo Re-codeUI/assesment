@@ -31,6 +31,35 @@ class QuestionController extends Controller
                 return redirect()->back()->with('error', 'Failed to save the questions.');
         }
     }
+    public function edit($id){
+         $question = Question::findOrFail($id);
+         $questionsData = json_decode($question->questions_data, true); // Decode JSON
+        //  dd($questionsData);
+        // Pastikan setiap item memiliki `question_text` dan `options`
+        foreach ($questionsData as &$myquestion) {
+            if (!isset($myquestion['question_text'])) {
+                $myquestion['question_text'] = ''; // Set default jika tidak ada
+            }
+            if (!isset($myquestion['options'])) {
+                $myquestion['options'] = []; // Set default jika tidak ada
+            }
+        }
+
+        return view('questions.edit', compact('question', 'questionsData'));
+    }
+    public function update(Request $request, $id)
+    {
+        $question = Question::findOrFail($id);
+
+        // Encode form data as JSON
+        $questionsData = $request->input('questions');
+        $question->questions_data = json_encode($questionsData);
+
+        // Save question
+        $question->save();
+
+        return redirect()->route('questions')->with('success', 'Questions updated successfully');
+    }
     private function validateRequest(Request $request){
         $request->validate([
             'namamapel' => 'required|string|max:255',

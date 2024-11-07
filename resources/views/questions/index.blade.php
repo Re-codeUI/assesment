@@ -52,7 +52,7 @@
                                 <td>
 
                                     <form action="">
-                                        <a href="" class="btn btn-warning btn-sm">Edit soal</a>
+                                        <a href="{{route('questions.edit',$question->id)}}" class="btn btn-warning btn-sm">Edit soal</a>
                                         <button type="submit" class="btn btn-danger btn-sm">Hapus soal</button>
                                     </form>
                                 </td>

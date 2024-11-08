@@ -14,18 +14,19 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['prefix' => 'users'], function(){
     Route::get('index', [App\Http\Controllers\User\UserController::class, 'index'])->name('users');
     Route::get('create', [App\Http\Controllers\User\UserController::class, 'create'])->name('users.create');
-    Route::get('show{user}', [App\Http\Controllers\User\UserController::class, 'show'])->name('users.show');
-    Route::get('edit{user}', [App\Http\Controllers\User\UserController::class, 'edit'])->name('users.edit');
-    Route::delete('destroy{user}', [App\Http\Controllers\User\UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('show/{user}', [App\Http\Controllers\User\UserController::class, 'show'])->name('users.show');
+    Route::get('edit/{user}', [App\Http\Controllers\User\UserController::class, 'edit'])->name('users.edit');
+    Route::delete('destroy/{user}', [App\Http\Controllers\User\UserController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::group(['prefix' => 'roles'], function(){
     Route::get('index', [App\Http\Controllers\Role\RoleController::class, 'index'])->name('roles');
     Route::get('create', [App\Http\Controllers\Role\RoleController::class, 'create'])->name('roles.create');
     Route::post('store', [App\Http\Controllers\Role\RoleController::class, 'store'])->name('roles.store');
-    Route::get('show{role}', [App\Http\Controllers\Role\RoleController::class, 'show'])->name('roles.show');
-    Route::get('edit{role}', [App\Http\Controllers\Role\RoleController::class, 'edit'])->name('roles.edit');
-    Route::delete('destroy{role}', [App\Http\Controllers\Role\RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::get('show/{role}', [App\Http\Controllers\Role\RoleController::class, 'show'])->name('roles.show');
+    Route::get('edit/{role}', [App\Http\Controllers\Role\RoleController::class, 'edit'])->name('roles.edit');
+    Route::put('update/{role}', [App\Http\Controllers\Role\RoleController::class, 'update'])->name('roles.update');
+    Route::delete('destroy/{role}', [App\Http\Controllers\Role\RoleController::class, 'destroy'])->name('roles.destroy');
 });
 
 Route::group(['prefix' => 'questions'], function(){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use DB;
 use Hash;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;

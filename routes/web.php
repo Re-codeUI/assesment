@@ -14,8 +14,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['prefix' => 'users'], function(){
     Route::get('index', [App\Http\Controllers\User\UserController::class, 'index'])->name('users');
     Route::get('create', [App\Http\Controllers\User\UserController::class, 'create'])->name('users.create');
+    Route::post('store', [App\Http\Controllers\User\UserController::class, 'store'])->name('users.store');
     Route::get('show/{user}', [App\Http\Controllers\User\UserController::class, 'show'])->name('users.show');
     Route::get('edit/{user}', [App\Http\Controllers\User\UserController::class, 'edit'])->name('users.edit');
+    Route::put('update/{user}', [App\Http\Controllers\User\UserController::class, 'update'])->name('users.update');
     Route::delete('destroy/{user}', [App\Http\Controllers\User\UserController::class, 'destroy'])->name('users.destroy');
 });
 

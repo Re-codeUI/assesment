@@ -6,7 +6,6 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
-
 /* Styling container utama untuk input gambar */
 .image-upload-container {
     position: relative;
@@ -108,4 +107,10 @@
 }
 .text-gray-500{
     color: #6B7280;
+}
+.image-upload-preview {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin-top: 10px;
 }

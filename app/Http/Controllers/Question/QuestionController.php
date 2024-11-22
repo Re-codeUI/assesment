@@ -17,49 +17,65 @@ class QuestionController extends Controller
         return view('questions.create');
     }
     public function store(Request $request){
-         \Log::info('Incoming request data:', $request->all());
+        
+        \Log::info('Incoming request data:', $request->all());
+        \Log::info('Files:', $request->files->all());
 
+
+        // Memastikan file ada di dalam request
+        if ($request->hasFile('question_image')) {
+            \Log::info('File found in question_image input.');
+        } else {
+            \Log::error('No file found in question_image input.');
+        }
+    
+        $this->validateRequest($request);
+    
+        $allQuestions = $this->processQuestions($request->input('questions'));
+    
+        if ($this->saveQuestions($request, $allQuestions)) {
+            return redirect()->back()->with('success', 'Soal berhasil disimpan!');
+        } else {
+            return redirect()->back()->with('error', 'Failed to save the questions.');
+        }
+    }
+    public function edit($id)
+    {
+        // Ambil data soal berdasarkan ID
+        $question = Question::findOrFail($id);
+    
+        // Dekode JSON questions_data untuk mempermudah manipulasi di view
+        $questions = json_decode($question->questions_data, true);
+    
+        return view('questions.edit', compact('question', 'questions'));
+    }
+    
+    public function update(Request $request, $id){
+        // Validasi data
         $this->validateRequest($request);
 
-        $allQuestions = [];
-
-        $allQuestions = $this->processQuestions($request->input('questions'));
-
-         if ($this->saveQuestions($request, $allQuestions)) {
-            return redirect()->back()->with('success', 'Soal berhasil disimpan!');
-            } else {
-                return redirect()->back()->with('error', 'Failed to save the questions.');
-        }
-    }
-    public function edit($id){
-         $question = Question::findOrFail($id);
-         $questionsData = json_decode($question->questions_data, true); // Decode JSON
-        //  dd($questionsData);
-        // Pastikan setiap item memiliki `question_text` dan `options`
-        foreach ($questionsData as &$myquestion) {
-            if (!isset($myquestion['question_text'])) {
-                $myquestion['question_text'] = ''; // Set default jika tidak ada
-            }
-            if (!isset($myquestion['options'])) {
-                $myquestion['options'] = []; // Set default jika tidak ada
-            }
-        }
-
-        return view('questions.edit', compact('question', 'questionsData'));
-    }
-    public function update(Request $request, $id)
-    {
         $question = Question::findOrFail($id);
 
-        // Encode form data as JSON
-        $questionsData = $request->input('questions');
-        $question->questions_data = json_encode($questionsData);
+        // Proses pertanyaan dan gambar
+        $allQuestions = $this->processQuestions($request->input('questions'));
 
-        // Save question
-        $question->save();
+        // Simpan data ke database
+        try {
+            $question->update([
+                'namamapel' => $request->input('namamapel'),
+                'tahun_ajar' => $request->input('tahun_ajar'),
+                'class_level' => $request->input('class_level'),
+                'jurusan' => $request->input('jurusan'),
+                'questions_data' => json_encode($allQuestions),
+            ]);
 
-        return redirect()->route('questions')->with('success', 'Questions updated successfully');
+            return redirect()->route('questions.index')->with('success', 'Soal berhasil diperbarui!');
+        } catch (\Exception $e) {
+            \Log::error('Update error:', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+        }
     }
+
     private function validateRequest(Request $request){
         $request->validate([
             'namamapel' => 'required|string|max:255',
@@ -71,31 +87,61 @@ class QuestionController extends Controller
             'questions.*.question_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048|nullable',
         ]);
     }
-    private function processQuestions(array $questions){
+    private function processQuestions(array $questions) {
         $allQuestions = [];
-
-        foreach ($questions as $questionData) {
+    
+        foreach ($questions as $index => $questionData) {
             $questionEntry = [
                 'question' => $questionData['question'] ?? null,
                 'options' => $this->getValidOptions($questionData),
-                'question_image' => $this->handleImageUpload($questionData),
+                'question_image' => $this->handleImageUpload($questionData, $index), // Kirim indeks ke handleImageUpload
             ];
-
+    
             $allQuestions[] = $questionEntry;
         }
-
+    
         return $allQuestions;
     }
+    
     private function getValidOptions(array $questionData){
         return !empty($questionData['options']) ? $questionData['options'] : [];
     }
 
-    private function handleImageUpload(array $questionData){
-        if (isset($questionData['question_image']) && $questionData['question_image']->isValid()) {
-            return $questionData['question_image']->store('question_images', 'public');
+    private function handleImageUpload(array $questionData, int $index) {
+        // Ambil file berdasarkan indeks pertanyaan
+        $file = request()->file("questions.{$index}.question_image");
+    
+        if ($file && $file instanceof \Illuminate\Http\UploadedFile) {
+            \Log::info('File details:', [
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'path' => $file->getRealPath(),
+                'size' => $file->getSize()
+            ]);
+    
+            if ($file->isValid()) {
+                try {
+                    // Buat nama file unik
+                    $uniqueFileName = uniqid() . '_' . $file->getClientOriginalName();
+                    $path = $file->storeAs('question_images', $uniqueFileName, 'public');
+                    \Log::info('Stored file at path: ' . $path);
+                    return $path;
+                } catch (\Exception $e) {
+                    \Log::error('Error uploading image: ' . $e->getMessage());
+                    return null;
+                }
+            } else {
+                \Log::error('File is not valid!');
+            }
+        } else {
+            \Log::error("No file found in questions[{$index}][question_image] input.");
         }
-        return null; // Return null if no valid image is uploaded
+    
+        return null;
     }
+    
+    
+
 
     private function saveQuestions(Request $request, array $allQuestions){
         try {

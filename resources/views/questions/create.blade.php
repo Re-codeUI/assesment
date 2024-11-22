@@ -75,7 +75,8 @@
                                     <div class="col-md-6">
                                         <div class="image-upload-container">
                                             <input type="file" name="questions[0][question_image]" id="question_image_0"
-                                                onchange="previewImage(event, document.getElementById('imagePreview_0'))">
+       onchange="previewImage(event, document.getElementById('imagePreview_0'))">
+
                                             <label for="question_image_0" class="text-gray-700">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera-fill"
                                                     viewBox="0 0 16 16">

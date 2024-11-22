@@ -39,3 +39,7 @@ Route::group(['prefix' => 'questions'], function(){
     Route::put('update/{question}', [App\Http\Controllers\Question\QuestionController::class, 'update'])->name('questions.update');
 
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -75,6 +75,14 @@ class QuestionController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
     }
+    function show($id){
+        $question = Question::findOrFail($id);
+    
+        // Dekode JSON questions_data untuk mempermudah manipulasi di view
+        $questions = json_decode($question->questions_data, true);
+        $letters = range('A', 'Z'); 
+        return view('questions.show', compact('question', 'questions','letters'));
+    }
 
     private function validateRequest(Request $request){
         $request->validate([

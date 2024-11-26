@@ -12,6 +12,9 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group">
+                            <input type="hidden" name="user_id" class="form-control" value="{{Auth::user()->id}}" required>
+                        </div>
+                        <div class="form-group">
                             <label for="namamapel">Nama Mapel</label>
                             <input type="text" name="namamapel" class="form-control" placeholder="Nama Mapel" required>
                         </div>

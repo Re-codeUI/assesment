@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Question;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
     public function index(){
-        $questions = Question::paginate(5);
+        $questions = Question::where('user_id', Auth::user()->id)->paginate(5);
         return view('questions.index', compact('questions'));
     }
     public function create() {
@@ -107,6 +108,7 @@ class QuestionController extends Controller
 
     private function validateRequest(Request $request){
         $request->validate([
+            'user_id'   => 'required',
             'namamapel' => 'required|string|max:255',
             'tahun_ajar' => 'required|string|max:10',
             'class_level' => 'required|integer',
@@ -162,6 +164,7 @@ class QuestionController extends Controller
     private function saveQuestions(Request $request, array $allQuestions){
         try {
             Question::create([
+                'user_id' => $request->input('user_id'),
                 'namamapel' => $request->input('namamapel'),
                 'class_level' => $request->input('class_level'),
                 'jurusan' => $request->input('jurusan'),

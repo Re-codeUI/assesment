@@ -8,6 +8,7 @@ class Question extends Model
 {
     protected $table = 'questions';
     protected $fillable = [
+        'user_id',
         'namamapel',
         'class_level',
         'jurusan',
@@ -17,4 +18,8 @@ class Question extends Model
     protected $casts = [
         'questions_data' => 'array',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

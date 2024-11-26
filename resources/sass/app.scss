@@ -8,182 +8,175 @@
 @import 'bootstrap/scss/bootstrap';
 /* Styling container utama untuk input gambar */
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    color: #212529;
-  }
-  
-  .container {
-    max-width: 800px;
-    margin: 20px auto;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+
 .image-upload-container {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 2px dashed #6c757d;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    text-align: center;
-    transition: background-color 0.3s ease;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px dashed #6c757d;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  text-align: center;
+  transition: background-color 0.3s ease;
 }
 
 .image-upload-container:hover {
-    background-color: #eef;
+  background-color: #eef;
 }
 
 .image-upload-container input[type="file"] {
-    display: none;
-    /* Sembunyikan input file asli */
+  display: none;
+  /* Sembunyikan input file asli */
 }
 
 .image-upload-container label {
-    font-size: 1.1rem;
-    color: #6c757d;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+  font-size: 1.1rem;
+  color: #6c757d;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .image-upload-container label svg {
-    width: 24px;
-    height: 24px;
-    color: #6c757d;
+  width: 24px;
+  height: 24px;
+  color: #6c757d;
 }
 
 /* Styling untuk ikon unggah */
 .image-upload-icon {
-    width: 50px;
-    height: 50px;
-    color: #007bff;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
+  width: 50px;
+  height: 50px;
+  color: #007bff;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
 .image-upload-container:hover .image-upload-icon {
-    opacity: 1;
+  opacity: 1;
 }
 
 .image-upload-container:hover label {
-    color: #007bff;
+  color: #007bff;
 }
 
 .image-upload-preview {
-    margin-top: 15px;
-    width: 100%;
-    max-width: 100%;
-    border-radius: 5px;
-    display: none;
-    /* Sembunyikan preview image awalnya */
+  margin-top: 15px;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 5px;
+  display: none;
+  /* Sembunyikan preview image awalnya */
 }
 .bg-red-300 {
-    background-color: #FCA5A5;
-    color: #DC2626;
+  background-color: #FCA5A5;
+  color: #DC2626;
 }
 
 .bg-red-600 {
-    background-color: #DC2626;
-    color:#FCA5A5;
+  background-color: #DC2626;
+  color:#FCA5A5;
 }
 .bg-blue-300 {
-    background-color: #93C5FD;
-    color: #2563EB;
+  background-color: #93C5FD;
+  color: #2563EB;
 }
 .bg-blue-600 {
-    background-color: #2563EB;
-    color:#93C5FD;
+  background-color: #2563EB;
+  color:#93C5FD;
 }
 .bg-green-300 {
-    background-color: #86EFAC;
-    color: #16A34A;
+  background-color: #86EFAC;
+  color: #16A34A;
 }
 .bg-gray-300 {
-    background-color: #D1D5DB;
-    color: #4B5563;
+  background-color: #D1D5DB;
+  color: #4B5563;
 }
 .bg-green-600 {
-    background-color: #16A34A;
-    color:#86EFAC ;
+  background-color: #16A34A;
+  color:#86EFAC ;
 }
 .bg-sky-50 {
-    background-color: #F9FCFE;
+  background-color: #F9FCFE;
 }
 
 .text-gray-700{
-    color: #4B5563;
+  color: #4B5563;
 }
 .text-gray-500{
-    color: #6B7280;
+  color: #6B7280;
 }
 .image-upload-preview {
-    max-width: 200px;
-    height: auto;
-    display: block;
-    margin-top: 10px;
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin-top: 10px;
 }
 
 header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  header h1 {
-    font-size: 24px;
-    margin: 0;
-    color: #007bff;
-  }
-  
-  header p {
-    margin: 5px 0;
-    font-size: 16px;
-  }
-  
-  .instructions {
-    background: #f0f8ff;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-  }
-  
-  .instructions h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  .questions h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  .question {
-    margin-bottom: 20px;
-  }
-  
-  .question p {
-    margin: 0 0 10px;
-  }
-  
-  .question blockquote {
-    margin: 10px 0;
-    padding-left: 20px;
-    border-left: 4px solid #007bff;
-    color: #555;
-    font-style: italic;
-  }
-  
-  input[type="radio"] {
-    margin-right: 10px;
-  }
-  li {
-    list-style-type: none; /* Menghilangkan tanda pada setiap <li> */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 24px;
+  margin: 0;
+  color: #007bff;
+}
+
+header p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.instructions {
+  background: #f0f8ff;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.instructions h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.questions h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.question {
+  margin-bottom: 20px;
+}
+
+.question p {
+  margin: 0 0 10px;
+}
+
+.question blockquote {
+  margin: 10px 0;
+  padding-left: 20px;
+  border-left: 4px solid #007bff;
+  color: #555;
+  font-style: italic;
+}
+
+input[type="radio"] {
+  margin-right: 10px;
+}
+li {
+  list-style-type: none; /* Menghilangkan tanda pada setiap <li> */
 }

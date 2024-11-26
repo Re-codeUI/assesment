@@ -67,8 +67,8 @@
 
                     </tbody>
                 </table>
-                {{ $questions->links() }}
             </div>
+            {{ $questions->links('pagination::bootstrap-4') }}
         </div>
     </div>
 </div>

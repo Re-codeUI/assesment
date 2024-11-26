@@ -35,14 +35,18 @@ class UserController extends Controller
             'roles' => 'required'
         ]);
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $request->merge(['password' => bcrypt($request->get('password'))]);
 
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+        if($user = User::create($request->except('roles'))){
+            $user->syncRoles($request->get('roles'));
 
-        return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+            flash()->success('Pengguna berhasil ditambahkan');
+
+        }else{
+            flash()->error('Tidak dapat menambahkan pengguna');
+        }
+
+        return redirect()->route('users');
     }
 
     public function show($id): View{
@@ -76,18 +80,26 @@ class UserController extends Controller
         }
 
         $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
+        if ($user->update($input)) {
+            DB::table('model_has_roles')->where('model_id', $id)->delete();
+            $user->assignRole($request->input('roles'));
+    
+            flash()->success('Pengguna berhasil diperbarui');
+        } else {
+            flash()->error('Tidak dapat memperbarui pengguna');
+        }
 
-        $user->assignRole($request->input('roles'));
-
-        return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+        return redirect()->route('users');
     }
 
     public function destroy($id): RedirectResponse{
-        User::find($id)->delete();
-        return redirect()->route('users.index')
-                        ->with('success','User deleted successfully');
+        $user = User::find($id);
+        if ($user) {
+            $user->delete();
+            flash()->success('Pengguna berhasil dihapus');
+        } else {
+            flash()->error('Tidak dapat menghapus pengguna');
+        }
+        return redirect()->route('users');
     }
 }

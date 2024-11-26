@@ -34,10 +34,11 @@ class QuestionController extends Controller
         $allQuestions = $this->processQuestions($request->input('questions'));
     
         if ($this->saveQuestions($request, $allQuestions)) {
-            return redirect()->back()->with('success', 'Soal berhasil disimpan!');
+            flash()->success('Soal berhasil disimpan!');
         } else {
-            return redirect()->back()->with('error', 'Failed to save the questions.');
+            flash()->error('Failed to save the questions.');
         }
+        return redirect()->back();
     }
     public function edit($id)
     {
@@ -87,17 +88,14 @@ class QuestionController extends Controller
                 'questions_data' => json_encode($allQuestions),
             ]);
     
-            return redirect()->route('questions')->with('success', 'Soal berhasil diperbarui!');
+            flash()->success('Soal berhasil diperbarui!');
         } catch (\Exception $e) {
             \Log::error('Update error:', ['message' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+            flash()->error('Terjadi kesalahan saat menyimpan data.');
         }
+        return redirect()->route('questions');
     }
-    
-    
-
-    
-    
+     
     function show($id){
         $question = Question::findOrFail($id);
     

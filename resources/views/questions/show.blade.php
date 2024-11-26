@@ -3,8 +3,8 @@
 @section('content')
 
 <div class="container">
-    <div class="card border-o bg-white">
-        <div class="card-header ">
+    <div class="card border-0 bg-white">
+        <div class="card-header bg-white ">
             <h3 class="text-center fw-bolder" >SOAL ASESMEN SUMATIF TENGAH SEMESTER (ASTS)</h3>
             <h3 class="text-center fw-bolder" >SMK AL-BAHRI TP. {{$question->tahun_ajar}}</h3>
             <section class="instructions">
@@ -46,21 +46,22 @@
                 </ol>
               </section>
         </div>
-        <div class="card-body">
-            <div class="card-body">
-                @foreach ($questions as $index => $q)
+        <div class="card-body bg-white">
+            @foreach ($questions as $index => $q)
+                
                     <div class="form-group">
                         <!-- Gambar Soal -->
-                        @if (!empty($q['question_image']))
+                        @if (!empty($q['image']))
                             <div class="image-upload-container mb-3">
                                 <img id="imagePreview_{{ $index }}" 
-                                     src="{{ asset('storage/' . $q['question_image']) }}" 
-                                     class="image-upload-preview" 
-                                     alt="Gambar Soal" 
-                                     style="max-width: 100%; max-height: 300px;">
+                                    src="{{ asset('storage/' . $q['image']) }}" 
+                                    class="image-upload-preview" 
+                                    alt="Gambar Soal {{ $index + 1 }}" 
+                                    style="max-width: 100%; max-height: 300px;">
                             </div>
+                        @else
+                            <p class="text-muted">Tidak ada gambar untuk soal ini.</p>
                         @endif
-            
                         <!-- Pertanyaan -->
                         <div class="question d-flex ">
                             <label for="questions[{{ $index }}][question]" class="fw-bold me-3">{{ $loop->iteration }}.</label>
@@ -99,8 +100,6 @@
                         @endif
                     </div>
                 @endforeach
-            </div>
-            
         </div>
     </div>
     

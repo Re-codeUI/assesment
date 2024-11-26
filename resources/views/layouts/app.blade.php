@@ -186,19 +186,19 @@
 
     // Function to preview image
     function previewImage(event, imgElement) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            imgElement.src = e.target.result;
-            imgElement.style.display = 'block';
-            console.log('Image preview updated:', e.target.result); // Debugging
-        };
-        reader.readAsDataURL(file);
-    } else {
-        console.log('No file selected.');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imgElement.src = e.target.result;
+                imgElement.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imgElement.style.display = 'none';
+        }
     }
-}
+
 
     // Function to remove question
     function removeQuestion(button) {

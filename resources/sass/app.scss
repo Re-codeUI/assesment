@@ -12,7 +12,7 @@ body {
   line-height: 1.6;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa;
+  background-color: #F9FCFE;
   color: #212529;
 }
 
@@ -111,12 +111,26 @@ body {
 .bg-sky-50 {
   background-color: #F9FCFE;
 }
+.btn-slate-700{
+  background-color: rgba(15,0,0,10);
+  color: rgb(255,255,255,10);
+  border: 1px solid transparent;
+}
+.btn-slate-700:hover{
+  background-color: rgba(255,255,255);
+  color: rgba(15,0,0,10);
+  border: 1px solid;
+  outline-color: rgba(15,0,0,10);
+}
 
 .text-gray-700{
   color: #4B5563;
 }
 .text-gray-500{
   color: #6B7280;
+}
+.text-sky-500{
+  color: #0EA5E9;
 }
 .image-upload-preview {
   max-width: 200px;
@@ -178,5 +192,5 @@ input[type="radio"] {
   margin-right: 10px;
 }
 li {
-  list-style-type: none; /* Menghilangkan tanda pada setiap <li> */
+  list-style-type: none;
 }

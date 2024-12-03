@@ -51,17 +51,18 @@
                 
                     <div class="form-group">
                         <!-- Gambar Soal -->
-                        @if (!empty($q['image']))
-                            <div class="image-upload-container mb-3">
-                                <img id="imagePreview_{{ $index }}" 
-                                    src="{{ asset('storage/' . $q['image']) }}" 
-                                    class="image-upload-preview" 
-                                    alt="Gambar Soal {{ $index + 1 }}" 
-                                    style="max-width: 100%; max-height: 300px;">
-                            </div>
+                        {{-- {{ dd($questions) }} --}}
+
+                        @if (!empty($q['question_image']))
+                            <img id="imagePreview_{{ $index }}" 
+                            src="{{ isset($q['question_image']) && !empty($q['question_image']) ? asset('storage/' . $q['question_image']) : '' }}" 
+                                class="image-upload-preview" 
+                                alt="Preview Gambar" 
+                                style="{{ isset($q['question_image']) && !empty($q['question_image']) ? 'max-width: 200px;' : 'display: none;' }}">
                         @else
                             <p class="text-muted">Tidak ada gambar untuk soal ini.</p>
                         @endif
+
                         <!-- Pertanyaan -->
                         <div class="question d-flex ">
                             <label for="questions[{{ $index }}][question]" class="fw-bold me-3">{{ $loop->iteration }}.</label>

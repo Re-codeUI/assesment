@@ -13,6 +13,7 @@
                 <div class="form-group">
                     <label for="namamapel">Nama Mapel</label>
                     <input type="text" name="namamapel" id="namamapel" class="form-control" value="{{ $question->namamapel }}" required>
+                    <input type="hidden" name="user_id" lass="form-control" value="{{ Auth::user()->id }}" required>
                 </div>
                 <div class="form-group">
                     <label for="tahun_ajar">Tahun Ajar</label>
@@ -60,24 +61,24 @@
                                         
                                     <div class="image-upload-container">
                                         <input type="file" 
-                                               name="questions[{{ $index }}][question_image]" 
-                                               id="question_image_{{ $index }}" 
-                                               onchange="previewImage(event, document.getElementById('imagePreview_{{ $index }}'))">
-                                        <input type="hidden" name="questions[{{ $index }}][existing_image]" value="{{ $q['image'] }}">
-                                        <label for="question_image_{{ $index }}" class="text-gray-700">
-                                            <img id="imagePreview_{{ $index }}" 
-                                                 src="{{ !empty($q['image']) ? asset('storage/' . $q['image']) : '' }}" 
-                                                 class="image-upload-preview" 
-                                                 alt="Preview Gambar" 
-                                                 style="{{ !empty($q['image']) ? 'max-width: 200px;' : 'display: none;' }}">
-                                
-                                            @if (empty($q['image']))
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera-fill" viewBox="0 0 16 16">
-                                                <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                                <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0" />
-                                            </svg>
-                                            @endif
-                                        </label>
+                                       name="questions[{{ $index }}][question_image]" 
+                                       id="question_image_{{ $index }}" 
+                                       onchange="previewImage(event, document.getElementById('imagePreview_{{ $index }}'))">
+                                <input type="hidden" name="questions[{{ $index }}][existing_image]" value="{{ isset($q['question_image']) ? $q['question_image'] : '' }}">
+                                <label for="question_image_{{ $index }}" class="text-gray-700">
+                                    <img id="imagePreview_{{ $index }}" 
+                                         src="{{ isset($q['question_image']) && !empty($q['question_image']) ? asset('storage/' . $q['question_image']) : '' }}" 
+                                         class="image-upload-preview" 
+                                         alt="Preview Gambar" 
+                                         style="{{ isset($q['question_image']) && !empty($q['question_image']) ? 'max-width: 200px;' : 'display: none;' }}">
+
+                                    @if (!isset($q['question_image']) || empty($q['question_image']))
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera-fill" viewBox="0 0 16 16">
+                                            <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                            <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0" />
+                                        </svg>
+                                    @endif
+                                </label>
                                     </div>
                                 </div>
                             </div>

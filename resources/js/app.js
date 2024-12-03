@@ -1,1 +1,2 @@
+// Import dependencies
 import './bootstrap';

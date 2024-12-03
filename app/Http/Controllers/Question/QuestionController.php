@@ -55,6 +55,7 @@ class QuestionController extends Controller
     public function update(Request $request, $id) {
         \Log::info('Files in request:', request()->files->all());
         
+
         
         // Validasi data
         $this->validateRequest($request);
@@ -69,19 +70,21 @@ class QuestionController extends Controller
         
             // Jika ada gambar baru yang diunggah
             if (request()->hasFile("questions.{$index}.question_image")) {
-                $data['image'] = $this->handleImageUpload($questionData, $index);
+                $data['question_image'] = $this->handleImageUpload($questionData, $index);
             } else {
                 // Jika tidak ada gambar baru, gunakan gambar lama
-                $data['image'] = $questionData['existing_image'] ?? null;
+                $data['question_image'] = $questionData['existing_image'] ?? null;
             }
         
             return $data;
         });
+        
             
-
+        \Log::info('Updated questions data:', ['questions_data' => $allQuestions]);
     
         try {
             $question->update([
+                'user_id' => $request->input('user_id'),
                 'namamapel' => $request->input('namamapel'),
                 'tahun_ajar' => $request->input('tahun_ajar'),
                 'class_level' => $request->input('class_level'),

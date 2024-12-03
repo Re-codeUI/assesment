@@ -1,0 +1,66 @@
+html_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sub-menu Styling</title>
+<style>
+  /* Reset default */
+  ul, li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sub-menu {
+    padding-left: 20px; /* Sesuaikan jarak konten dari garis */
+    position: relative;
+  }
+
+  .sub-item {
+    position: relative;
+    padding: 10px 0 10px 20px; /* Jarak konten dalam elemen */
+  }
+
+  /* Garis vertikal kiri */
+  .sub-item::before {
+    content: "";
+    position: absolute;
+    top: 0; /* Dimulai dari atas elemen */
+    left: 0; /* Garis di kiri elemen */
+    width: 2px; /* Ketebalan garis */
+    height: 100%; /* Tinggi mengikuti elemen */
+    background-color: #d6d8db; /* Warna garis */
+  }
+
+  /* Lengkungan di atas elemen pertama */
+  .sub-item:first-child::before {
+    border-top-left-radius: 10px;
+  }
+
+  /* Lengkungan di bawah elemen terakhir */
+  .sub-item:last-child::before {
+    border-bottom-left-radius: 10px;
+  }
+
+  /* Garis horizontal */
+  .sub-item::after {
+    content: "";
+    position: absolute;
+    top: 50%; /* Tengah vertikal elemen */
+    left: 0; /* Dimulai dari garis vertikal */
+    width: 20px; /* Panjang garis horizontal */
+    height: 2px; /* Ketebalan garis */
+    background-color: #d6d8db; /* Warna garis */
+    transform: translateY(-50%);
+  }
+</style>
+</head>
+<body>
+<ul class="sub-menu">
+  <li class="sub-item">Cross</li>
+  <li class="sub-item">SaaS</li>
+</ul>
+</body>
+</html>

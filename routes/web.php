@@ -9,7 +9,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware(\App\Http\Middleware\TimeOfDayMiddleware::class);
 
 Route::group(['prefix' => 'users'], function(){
     Route::get('index', [App\Http\Controllers\User\UserController::class, 'index'])->name('users');

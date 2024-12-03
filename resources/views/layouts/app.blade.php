@@ -116,6 +116,31 @@
             imgElement.style.display = 'none';
         }
     }
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', event => {
+            const file = event.target.files[0];
+            const previewId = event.target.dataset.previewId;
+            const previewImage = document.getElementById(previewId);
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    // Menampilkan gambar lama jika ada
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.image-upload-preview').forEach(previewImage => {
+            if (previewImage.src === '') {
+                previewImage.style.display = "none";
+            }
+        });
+    });
 
 
     // Function to remove question

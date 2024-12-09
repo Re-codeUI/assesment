@@ -54,11 +54,8 @@
                         {{-- {{ dd($questions) }} --}}
 
                         @if (!empty($q['question_image']))
-                            <img id="imagePreview_{{ $index }}" 
-                            src="{{ isset($q['question_image']) && !empty($q['question_image']) ? asset('storage/' . $q['question_image']) : '' }}" 
-                                class="image-upload-preview" 
-                                alt="Preview Gambar" 
-                                style="{{ isset($q['question_image']) && !empty($q['question_image']) ? 'max-width: 200px;' : 'display: none;' }}">
+                            <img src="{{ asset('storage/' . $q['question_image']) }}" alt="Soal Image" class="img-thumbnail mt-2" style="max-height: 150px;">
+                            <input type="hidden" name="questions[{{ $index }}][existing_image]" value="{{ $q['question_image'] }}">
                         @else
                             <p class="text-muted">Tidak ada gambar untuk soal ini.</p>
                         @endif
@@ -71,14 +68,7 @@
                                  {{ $q['question'] }}
                             </blockquote>
                         </div>
-            
-                        <!-- Text Area untuk Esai -->
-                        @if (empty($q['options']))
-                            <textarea name="questions[{{ $index }}][answer]" 
-                                      rows="4" 
-                                      class="form-control mb-3" 
-                                      placeholder="Tulis jawaban Anda di sini..."></textarea>
-                        @endif
+    
             
                         <!-- Pilihan Ganda -->
                         @if (!empty($q['options']))

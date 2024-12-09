@@ -14,7 +14,7 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/ui.scss', 'resources/js/app.js'])
 </head>
 <body class="bg-sky-50">
     <div id="app">
@@ -29,125 +29,112 @@
         </main>
     </div>
     <script>
-        // Helper to create answer options
-    function createAnswerOptions(index) {
-        return `
-            <input type="text" name="questions[${index}][options][]" class="form-control mb-2" placeholder="Pilihan A">
-            <input type="text" name="questions[${index}][options][]" class="form-control mb-2" placeholder="Pilihan B">
-            <input type="text" name="questions[${index}][options][]" class="form-control mb-2" placeholder="Pilihan C">
-            <input type="text" name="questions[${index}][options][]" class="form-control mb-2" placeholder="Pilihan D">
-        `;
-    }
 
-    // Helper to create image upload label
-    function createImageUploadLabel(index) {
-        return `
-            <label for="question_image_${index}" class="text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera-fill" viewBox="0 0 16 16">
-                    <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                    <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1m9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0" />
-                </svg>
-            </label>
-        `;
-    }
+        let questionCount = 0; // Counter soal
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Untuk opsi jawaban
 
-    // Function to create question HTML
-    function createQuestionHtml(index) {
-        return `
-            <div class="question-item">
-                <div class="card border-0">
-                    <div class="card-header border-0 bg-white border-top">
-                        <h4 class="text-gray-700 fw-bold">Create New Soal</h4>
-                    </div>
-                    <div class="card-body bg-white">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="question">Pertanyaan</label>
-                                    <textarea name="questions[${index}][question]" class="form-control" rows="3" placeholder="Masukkan pertanyaan" required></textarea>
+        // Fungsi membuat HTML opsi jawaban
+        function createAnswerOptionHtml(index, optionIndex) {
+            const label = alphabet[optionIndex]; // Opsi A, B, C, ...
+            return `
+                <div class="mb-3" id="option-${index}-${optionIndex}">
+                    <label class="form-label" for="option${index}-${optionIndex}">Opsi ${label}</label>
+                    <input type="text" class="form-control" name="questions[${index}][options][]" id="option${index}-${optionIndex}">
+                </div>
+            `;
+        }
+
+        // Fungsi menambah opsi jawaban
+        function addOption(index) {
+            const container = document.getElementById(`options-container-${index}`);
+            const options = container.querySelectorAll(".form-control");
+            const optionIndex = options.length;
+
+            if (optionIndex < alphabet.length) {
+                const newOptionHtml = createAnswerOptionHtml(index, optionIndex);
+                const addOptionButton = container.querySelector(".add-option-btn");
+                if (addOptionButton) {
+                    addOptionButton.insertAdjacentHTML("beforebegin", newOptionHtml);
+                } else {
+                    container.insertAdjacentHTML("beforeend", newOptionHtml);
+                }
+            } else {
+                alert("Jumlah opsi maksimal sudah tercapai!");
+            }
+        }
+
+        // Fungsi membuat soal baru
+        function createQuestionHtml(index) {
+            return `
+                <div class="row mt-3 question-item" id="question-${index}">
+                    <div class="col-md-10">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <textarea name="questions[${index}][question]" cols="30" rows="3" class="form-control" placeholder="Tulis soal di sini"></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label>Pilihan Jawaban: <span class="text-danger">(Opsional)</span></label>
-                                    <div>${createAnswerOptions(index)}</div>
+                                <div class="col-md-6">
+                                    <input type="file" name="questions[${index}][question_image]" class="form-control" onchange="previewImage(event, 'imagePreview_${index}')">
+                                    <img id="imagePreview_${index}" class="image-upload-preview" alt="Preview Gambar" style="display: none; max-height: 150px;">
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="image-upload-container">
-                                    <input type="file" name="questions[${index}][question_image]" id="question_image_${index}" 
-                                        onchange="previewImage(event, document.getElementById('imagePreview_${index}'))">
-                                    ${createImageUploadLabel(index)}
-                                    <img id="imagePreview_${index}" class="image-upload-preview" alt="Preview Gambar" style="display: none;">
+
+                                <div class="col-md-6 mt-2" id="options-container-${index}">
+                                    <button type="button" class="btn btn-secondary mt-2 add-option-btn" onclick="addOption(${index})">Tambah Opsi Baru</button>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" class="btn mb-2 bg-red-300 remove-question" onclick="removeQuestion(this)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                    </svg>
-                                </button>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary w-100 mt-2 add-question-btn" onclick="addQuestion()">Tambah Soal</button>
+                        <button type="button" class="btn btn-danger w-100 mt-2" onclick="removeQuestion(${index})">Hapus Soal</button>
+                    </div>
                 </div>
-            </div>`;
-    }
-
-    // Function to add a new question
-    function addQuestion() {
-        const container = document.getElementById("questions-container");
-        const questionCount = container.childElementCount;
-        const newQuestionHtml = createQuestionHtml(questionCount);
-
-        container.insertAdjacentHTML("beforeend", newQuestionHtml);
-    }
-
-    // Function to preview image
-    function previewImage(event, imgElement) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                imgElement.src = e.target.result;
-                imgElement.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            imgElement.style.display = 'none';
+            `;
         }
-    }
-    document.querySelectorAll('input[type="file"]').forEach(input => {
-        input.addEventListener('change', event => {
-            const file = event.target.files[0];
-            const previewId = event.target.dataset.previewId;
-            const previewImage = document.getElementById(previewId);
 
+        // Fungsi menambah soal baru
+        function addQuestion() {
+            const container = document.getElementById("questions-container");
+            container.querySelectorAll('.add-question-btn').forEach(btn => btn.remove());
+            const newQuestionHtml = createQuestionHtml(questionCount);
+            container.insertAdjacentHTML("beforeend", newQuestionHtml);
+            questionCount++;
+        }
+
+        // Fungsi hapus soal
+        function removeQuestion(index) {
+            const questionElement = document.getElementById(`question-${index}`);
+            if (questionElement) questionElement.remove();
+
+            if (document.getElementById("questions-container").children.length === 0) {
+                questionCount = 0;
+                document.getElementById("questions-container").insertAdjacentHTML(
+                    "beforeend",
+                    `<div class="row mt-3">
+                        <div class="col-md-2 offset-md-10">
+                            <button type="button" class="btn btn-primary w-100 mt-2 add-question-btn" onclick="addQuestion()">Tambah Soal</button>
+                        </div>
+                    </div>`
+                );
+            }
+        }
+        // Fungsi untuk preview gambar
+        function previewImage(event, previewId) {
+            const file = event.target.files[0];
+            const imgElement = document.getElementById(previewId);
+            
+            // Jika file ada, update preview gambar
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = "block";
+                    imgElement.src = e.target.result;  // Update src gambar
+                    imgElement.style.display = 'block'; // Tampilkan gambar baru
                 };
                 reader.readAsDataURL(file);
+            } else {
+                imgElement.style.display = 'none';  // Jika tidak ada gambar, sembunyikan
             }
-        });
-    });
-
-    // Menampilkan gambar lama jika ada
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.image-upload-preview').forEach(previewImage => {
-            if (previewImage.src === '') {
-                previewImage.style.display = "none";
-            }
-        });
-    });
-
-
-    // Function to remove question
-    function removeQuestion(button) {
-        button.closest('.question-item').remove();
-    }
-
+        }
     </script>
 </body>
 </html>

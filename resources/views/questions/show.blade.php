@@ -48,7 +48,7 @@
         </div>
         <div class="card-body bg-white">
             @foreach ($questions as $index => $q)
-                
+                    {{-- {{dd($q)}} --}}
                     <div class="form-group">
                         <!-- Gambar Soal -->
                         {{-- {{ dd($questions) }} --}}
@@ -64,9 +64,7 @@
                         <div class="question d-flex ">
                             <label for="questions[{{ $index }}][question]" class="fw-bold me-3">{{ $loop->iteration }}.</label>
                             
-                            <blockquote>
-                                 {{ $q['question'] }}
-                            </blockquote>
+                            <div class="math-question-display"> \( {!! $q['question'] !!} \)</div>
                         </div>
     
             
@@ -94,6 +92,9 @@
         </div>
     </div>
     
-  </div>
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            MathJax.typeset(); // Memulai proses rendering MathJax
+        });
+    </script>
 @endsection

@@ -12,9 +12,59 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.min.js"></script>
+    <!-- Tambahkan MathQuill CSS -->
+    <script type="text/javascript" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    
     <!-- Scripts -->
-    @vite(['resources/sass/ui.scss', 'resources/js/app.js'])
+    @vite([
+    'resources/js/createQuestion.js',   // Pastikan ini dimuat lebih dulu
+    'resources/js/app.js',
+    'resources/js/toolbarLatext.js',
+    'resources/js/imagePreview.js',
+    'resources/js/removeQuestion.js',
+    'resources/js/submitForm.js',
+    'resources/sass/ui.scss',
+])
+    <style>
+        #toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        #toolbar button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #000;
+            border-radius: 3px;
+            background-color: #000;
+        }
+        #toolbar button:hover {
+            background-color: #000;
+        }
+        .math-question-display {
+            display: inline-block; /* Agar sesuai dengan elemen Latex */
+            font-size: 1.2em; /* Ukuran font lebih besar agar mudah dibaca */
+            font-family: 'Cambria Math', 'Times New Roman', serif; /* Gunakan font matematika */
+            padding: 10px; /* Ruang sekitar teks */
+            margin: 10px 0; /* Jarak antar elemen */
+            background-color: #f9f9f9; /* Warna latar belakang lembut */
+            border: 1px solid #ddd; /* Tambahkan border tipis */
+            border-radius: 5px; /* Sudut border membulat */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Tambahkan efek bayangan */
+            text-align: center; /* Pusatkan teks */
+            color: #333; /* Warna teks */
+            overflow-x: auto; /* Tambahkan scrollbar horizontal jika konten terlalu panjang */
+        }
+        
+
+    </style>
 </head>
 <body class="bg-sky-50">
     <div id="app">
@@ -29,112 +79,24 @@
         </main>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("Halaman dimuat");
 
-        let questionCount = 0; // Counter soal
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Untuk opsi jawaban
+            if (context === "edit") {
+                console.log("Mode edit aktif");
+                console.log("Soal yang ada:", existingQuestions);
 
-        // Fungsi membuat HTML opsi jawaban
-        function createAnswerOptionHtml(index, optionIndex) {
-            const label = alphabet[optionIndex]; // Opsi A, B, C, ...
-            return `
-                <div class="mb-3" id="option-${index}-${optionIndex}">
-                    <label class="form-label" for="option${index}-${optionIndex}">Opsi ${label}</label>
-                    <input type="text" class="form-control" name="questions[${index}][options][]" id="option${index}-${optionIndex}">
-                </div>
-            `;
-        }
-
-        // Fungsi menambah opsi jawaban
-        function addOption(index) {
-            const container = document.getElementById(`options-container-${index}`);
-            const options = container.querySelectorAll(".form-control");
-            const optionIndex = options.length;
-
-            if (optionIndex < alphabet.length) {
-                const newOptionHtml = createAnswerOptionHtml(index, optionIndex);
-                const addOptionButton = container.querySelector(".add-option-btn");
-                if (addOptionButton) {
-                    addOptionButton.insertAdjacentHTML("beforebegin", newOptionHtml);
-                } else {
-                    container.insertAdjacentHTML("beforeend", newOptionHtml);
-                }
-            } else {
-                alert("Jumlah opsi maksimal sudah tercapai!");
+                // Loop data soal dan tambahkan form soal ke dalam kontainer
+                existingQuestions.forEach((question, index) => {
+                    const questionHtml = createQuestionHtml(index, question); // Hasilkan HTML untuk soal
+                    document.getElementById("questions-container").insertAdjacentHTML("beforeend", questionHtml);
+                });
+            } else if (context === "create") {
+                console.log("Mode create aktif");
             }
-        }
+        });
 
-        // Fungsi membuat soal baru
-        function createQuestionHtml(index) {
-            return `
-                <div class="row mt-3 question-item" id="question-${index}">
-                    <div class="col-md-10">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <textarea name="questions[${index}][question]" cols="30" rows="3" class="form-control" placeholder="Tulis soal di sini"></textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="file" name="questions[${index}][question_image]" class="form-control" onchange="previewImage(event, 'imagePreview_${index}')">
-                                    <img id="imagePreview_${index}" class="image-upload-preview" alt="Preview Gambar" style="display: none; max-height: 150px;">
-                                </div>
 
-                                <div class="col-md-6 mt-2" id="options-container-${index}">
-                                    <button type="button" class="btn btn-secondary mt-2 add-option-btn" onclick="addOption(${index})">Tambah Opsi Baru</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-primary w-100 mt-2 add-question-btn" onclick="addQuestion()">Tambah Soal</button>
-                        <button type="button" class="btn btn-danger w-100 mt-2" onclick="removeQuestion(${index})">Hapus Soal</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Fungsi menambah soal baru
-        function addQuestion() {
-            const container = document.getElementById("questions-container");
-            container.querySelectorAll('.add-question-btn').forEach(btn => btn.remove());
-            const newQuestionHtml = createQuestionHtml(questionCount);
-            container.insertAdjacentHTML("beforeend", newQuestionHtml);
-            questionCount++;
-        }
-
-        // Fungsi hapus soal
-        function removeQuestion(index) {
-            const questionElement = document.getElementById(`question-${index}`);
-            if (questionElement) questionElement.remove();
-
-            if (document.getElementById("questions-container").children.length === 0) {
-                questionCount = 0;
-                document.getElementById("questions-container").insertAdjacentHTML(
-                    "beforeend",
-                    `<div class="row mt-3">
-                        <div class="col-md-2 offset-md-10">
-                            <button type="button" class="btn btn-primary w-100 mt-2 add-question-btn" onclick="addQuestion()">Tambah Soal</button>
-                        </div>
-                    </div>`
-                );
-            }
-        }
-        // Fungsi untuk preview gambar
-        function previewImage(event, previewId) {
-            const file = event.target.files[0];
-            const imgElement = document.getElementById(previewId);
-            
-            // Jika file ada, update preview gambar
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imgElement.src = e.target.result;  // Update src gambar
-                    imgElement.style.display = 'block'; // Tampilkan gambar baru
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imgElement.style.display = 'none';  // Jika tidak ada gambar, sembunyikan
-            }
-        }
     </script>
 </body>
 </html>

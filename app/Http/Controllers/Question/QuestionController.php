@@ -15,7 +15,7 @@ class QuestionController extends Controller
         return view('questions.index', compact('questions'));
     }
     public function create() {
-        return view('questions.create');
+        return view('questions.create', ['context' => 'create']);
     }
     public function store(Request $request){
         
@@ -43,13 +43,13 @@ class QuestionController extends Controller
     }
     public function edit($id)
     {
-        // Ambil data soal berdasarkan ID
         $question = Question::findOrFail($id);
-    
-        // Dekode JSON questions_data untuk mempermudah manipulasi di view
-        $questions = json_decode($question->questions_data, true);
-    
-        return view('questions.edit', compact('question', 'questions'));
+
+        return view('questions.create', [
+            'context' => 'edit',
+            'question' => $question,
+            'existingQuestions' => json_decode($question->questions_data, true), // Decode JSON
+        ]);
     }
     
     public function update(Request $request, $id) {
@@ -68,23 +68,22 @@ class QuestionController extends Controller
                 'options' => $this->getValidOptions($questionData),
             ];
         
-            // Jika ada gambar baru yang diunggah
             if (request()->hasFile("questions.{$index}.question_image")) {
+                // Simpan gambar baru
                 $data['question_image'] = $this->handleImageUpload($questionData, $index);
             } else {
-                // Jika tidak ada gambar baru, gunakan gambar lama
+                // Gunakan gambar lama jika tidak ada upload baru
                 $data['question_image'] = $questionData['existing_image'] ?? null;
             }
         
             return $data;
         });
-        
-            
+      
         \Log::info('Updated questions data:', ['questions_data' => $allQuestions]);
     
         try {
             $question->update([
-                'user_id' => $request->input('user_id'),
+                'user_id' => Auth::id(),
                 'namamapel' => $request->input('namamapel'),
                 'tahun_ajar' => $request->input('tahun_ajar'),
                 'class_level' => $request->input('class_level'),
@@ -105,18 +104,22 @@ class QuestionController extends Controller
     
         // Dekode JSON questions_data untuk mempermudah manipulasi di view
         $questions = json_decode($question->questions_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            abort(500, 'Data questions_data tidak valid.');
+        }
+    
         $letters = range('A', 'Z'); 
         return view('questions.show', compact('question', 'questions','letters'));
     }
 
     private function validateRequest(Request $request){
         $request->validate([
-            'user_id'   => 'required',
+            
             'namamapel' => 'required|string|max:255',
             'tahun_ajar' => 'required|string|max:10',
             'class_level' => 'required|integer',
             'jurusan' => 'required|string|max:255',
-            'questions.*.question' => 'required|string|max:1000',
+            'questions.*.question' => 'required|string|max:2000',
             'questions.*.options.*' => 'nullable|string|max:255',
             'questions.*.question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
@@ -167,7 +170,7 @@ class QuestionController extends Controller
     private function saveQuestions(Request $request, array $allQuestions){
         try {
             Question::create([
-                'user_id' => $request->input('user_id'),
+                'user_id' => Auth::id(),
                 'namamapel' => $request->input('namamapel'),
                 'class_level' => $request->input('class_level'),
                 'jurusan' => $request->input('jurusan'),

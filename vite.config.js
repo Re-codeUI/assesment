@@ -6,8 +6,12 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
-                'resources/sass/ui.scss',
                 'resources/js/app.js',
+                'resources/js/createQuestion.js',
+                'resources/js/removeQuestion.js',
+                'resources/js/imagePreview.js',
+                'resources/js/toolbarLatext.js',
+                'resources/js/submitForm.js',
             ],
             refresh: true,
         }),

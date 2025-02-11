@@ -28,6 +28,7 @@ Route::group(['prefix' => 'questions'], function(){
     Route::get('edit/{question}', [App\Http\Controllers\Question\QuestionController::class, 'edit'])->name('questions.edit');
     Route::put('update/{question}', [App\Http\Controllers\Question\QuestionController::class, 'update'])->name('questions.update');
     Route::get('show/{question}', [App\Http\Controllers\Question\QuestionController::class, 'show'])->name('questions.show');
+    Route::delete('destroy{question}', [App\Http\Controllers\Question\QuestionController::class, 'destroy'])->name('questions.destroy');
 
 });
 

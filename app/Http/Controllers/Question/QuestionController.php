@@ -112,7 +112,51 @@ class QuestionController extends Controller
         return view('questions.show', compact('question', 'questions','letters'));
     }
 
+public function destroy($id)
+{
+    try {
+        $question = Question::findOrFail($id);
+        
+        // Ambil data pertanyaan dari JSON
+        $questionsData = json_decode($question->questions_data, true);
+
+        if ($questionsData) {
+            foreach ($questionsData as $q) {
+                if (!empty($q['question_image'])) {
+                    $imagePath = 'public/question_images/' . basename($q['question_image']);
+        
+                    if (Storage::exists($imagePath)) {
+                        Storage::delete($imagePath);
+                        \Log::info("File berhasil dihapus: " . $imagePath);
+                    } else {
+                        \Log::error("File tidak ditemukan di storage: " . $imagePath);
+                    }
+        
+                    // Coba metode `unlink()`
+                    $filePath = storage_path("app/public/question_images/" . basename($q['question_image']));
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                        \Log::info("File berhasil dihapus dengan unlink: " . $filePath);
+                    } else {
+                        \Log::error("File tidak ditemukan di: " . $filePath);
+                    }
+                }
+            }
+        }        
+
+        // Hapus data soal dari database
+        $question->delete();
+
+        return redirect()->route('questions')->with('success', 'Soal dan gambarnya berhasil dihapus!');
+    } catch (\Exception $e) {
+        return redirect()->route('questions')->with('error', 'Terjadi kesalahan saat menghapus soal.');
+    }
+}
+
     private function validateRequest(Request $request){
+        
+        // dd($request);
+
         $request->validate([
             
             'namamapel' => 'required|string|max:255',

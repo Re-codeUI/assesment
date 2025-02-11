@@ -1,6 +1,7 @@
 
 let questionCount = 0;
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let activeQuestionId = null; // Menyimpan ID soal yang aktif
 
 // Membuat HTML untuk opsi jawaban
 function createAnswerOptionHtml(index, optionIndex) {
@@ -40,7 +41,8 @@ function createQuestionHtml(index, question = {}) {
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <textarea name="questions[${index}][question]" class="form-control">${question.question || ''}</textarea>
+                            <div id="math-input-${index}" class="math-field">${question.question || ''}</div>
+                            <textarea id="editor-${index}" name="questions[${index}][question]" class="form-control d-none">${question.question || ''}</textarea>
                         </div>
                         <div class="col-md-6">
                             <input type="hidden" name="questions[${index}][existing_image]" value="${question.question_image || ''}">
@@ -71,22 +73,39 @@ function createQuestionHtml(index, question = {}) {
 }
 
 
-
 console.log('createQuestion.js berhasil dimuat');
+
+setTimeout(() => {
+    const mathInput = document.getElementById(`math-input-${index}`);
+    if (mathInput) {
+        mathInput.addEventListener("focus", () => {
+            activeQuestionId = index;
+            console.log(`Soal aktif diperbarui: ${activeQuestionId}`);
+        });
+    }
+}, 100);
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Halaman dimuat");
 
-    if (context === "edit") {
+    const mode = typeof context !== "undefined" ? context : "create";
+
+    if (mode === "edit") {
         console.log("Mode edit aktif");
         console.log("Soal yang ada:", existingQuestions);
 
-        // Pastikan existingQuestions berisi array soal
-        existingQuestions.forEach((question, index) => {
-            const questionHtml = createQuestionHtml(index, question); // Hasilkan HTML untuk soal
-            document.getElementById("questions-container").insertAdjacentHTML("beforeend", questionHtml);
-        });
-    } else if (context === "create") {
+        if (Array.isArray(existingQuestions)) {
+            existingQuestions.forEach((question, index) => {
+                const questionHtml = createQuestionHtml(index, question);
+                document.getElementById("questions-container").insertAdjacentHTML("beforeend", questionHtml);
+
+                // 🔹 Setelah menambahkan soal, inisialisasi MathQuill
+                setTimeout(() => {
+                    initMathField(document.getElementById(`math-input-${index}`), index);
+                }, 100);
+            });
+        }
+    } else {
         console.log("Mode create aktif");
     }
 });
@@ -102,42 +121,50 @@ function addQuestion() {
     const newQuestionHtml = createQuestionHtml(questionCount);
     container.insertAdjacentHTML("beforeend", newQuestionHtml);
 
+    // Pastikan MathQuill terinisialisasi setelah elemen ada di DOM
+    const mathFieldElement = document.getElementById(`math-input-${questionCount}`);
+    if (mathFieldElement) {
+        initMathField(mathFieldElement, questionCount);
+    } else {
+        console.error(`Elemen math-input-${questionCount} tidak ditemukan.`);
+    }
+
+    console.log(`Soal baru dengan ID ${questionCount} berhasil ditambahkan.`);
+    questionCount++;
+}
+
+
+function initMathField(mathFieldElement, questionId) {
     const MQ = MathQuill.getInterface(2);
     if (!MQ) {
         console.error("MathQuill tidak dapat diakses.");
         return;
     }
 
-    const mathFieldElement = document.getElementById(`math-input-${questionCount}`);
-    if (!mathFieldElement) {
-        console.error(`Elemen math-input-${questionCount} tidak ditemukan.`);
-        return;
-    }
+    console.log(`Menginisialisasi MathQuill untuk soal ${questionId}`);
 
     const mathField = MQ.MathField(mathFieldElement, {
         handlers: {
             edit: function () {
-                const textarea = document.getElementById(`editor-${questionCount}`);
+                const textarea = document.getElementById(`editor-${questionId}`);
                 if (textarea) {
                     textarea.value = mathField.latex();
-
-                    const staticMathContainer = document.getElementById(`static-math-${questionCount}`);
-                    if (staticMathContainer) {
-                        MQ.StaticMath(staticMathContainer).latex(mathField.latex());
-                    }
                 }
             }
         }
     });
 
-    const staticMathContainer = document.getElementById(`static-math-${questionCount}`);
-    if (staticMathContainer) {
-        MQ.StaticMath(staticMathContainer).latex("");
+    // Jika soal dalam mode edit, isi MathQuill dengan soal yang tersimpan
+    const existingLatex = document.getElementById(`editor-${questionId}`).value;
+    if (existingLatex) {
+        mathField.latex(existingLatex);
     }
 
-    console.log(`Soal baru dengan ID ${questionCount} berhasil ditambahkan.`);
-    questionCount++;
+    // Simpan instance MathQuill ke elemen agar bisa diakses nanti
+    mathFieldElement.mathFieldInstance = mathField;
 }
+
+
 
 // Pastikan addQuestion tersedia secara global
 window.addQuestion = addQuestion;

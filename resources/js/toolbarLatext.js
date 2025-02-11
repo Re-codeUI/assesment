@@ -59,22 +59,39 @@ document.addEventListener('DOMContentLoaded', function () {
         toolbarContainer.appendChild(btn);
     });
 
-    // Fungsi untuk menambahkan simbol LaTeX ke editor
     function insertLatex(latex) {
+        if (typeof activeQuestionId === "undefined" || activeQuestionId === null) {
+            console.error("activeQuestionId tidak didefinisikan.");
+            return;
+        }
+    
         const mathEditor = document.getElementById(`math-input-${activeQuestionId}`);
-        if (mathEditor) {
-            const MQ = MathQuill.getInterface(2);
-            const mathField = MQ.MathField(mathEditor);
-            mathField.write(latex);
-            mathField.focus();
-            const textarea = document.getElementById(`editor-${activeQuestionId}`);
-            if (textarea) {
-                textarea.value = mathField.latex();
-            }
+        if (!mathEditor) {
+            console.error(`Math editor tidak ditemukan untuk soal dengan ID ${activeQuestionId}.`);
+            return;
+        }
+    
+        const MQ = MathQuill.getInterface(2);
+        const mathField = mathEditor.mathFieldInstance;
+        if (!mathField) {
+            console.error("MathQuill instance tidak ditemukan.");
+            return;
+        }
+    
+        mathField.write(latex);
+        mathField.focus();
+    
+        const textarea = document.getElementById(`editor-${activeQuestionId}`);
+        if (textarea) {
+            textarea.value = mathField.latex();
+            console.log(`Latex berhasil disimpan ke textarea ${activeQuestionId}: ${textarea.value}`);
         } else {
-            console.error("Math editor tidak ditemukan untuk soal ini.");
+            console.error(`Textarea untuk soal ${activeQuestionId} tidak ditemukan.`);
         }
     }
+    
+    
+    
 
     // Fungsi untuk menambahkan soal baru
     function addQuestion() {

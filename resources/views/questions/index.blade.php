@@ -51,9 +51,11 @@
                             <td>close</td>
                             <td>
 
-                                <form action="">
+                                <form id="delete-form-{{ $question->id }}" action="{{ route('questions.destroy', $question->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
                                     <a href="{{route('questions.edit',$question->id)}}" class="btn btn-warning btn-sm">Edit soal</a>
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus soal</button>
+                                    <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $question->id }})">Hapus soal</button>
                                 </form>
                             </td>
                         </tr>
@@ -73,3 +75,10 @@
 </div>
 
 @endsection
+<script>
+    function confirmDelete(questionId) {
+        if (confirm("Apakah Anda yakin ingin menghapus soal ini?")) {
+            document.getElementById(`delete-form-${questionId}`).submit();
+        }
+    }
+</script>
